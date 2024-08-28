@@ -1,0 +1,34 @@
+name: Update Site
+
+on:
+  push:
+    paths:
+      - 'images/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Update metadata
+      run: |
+        python update_metadata.py
+
+    - name: Deploy site
+      run: |
+        cp -r docs/* $GITHUB_WORKSPACE
+        git add .
+        git commit -m "Update site"
+        git push
