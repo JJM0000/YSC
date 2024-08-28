@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>악보집</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .filter-section {
+            margin-bottom: 20px;
+        }
+        .filter-section label {
+            margin-right: 10px;
+        }
+        .filter-section select, .filter-section input {
+            margin-right: 15px;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .results ul {
+            list-style: none;
+            padding: 0;
+        }
+        .results li {
+            margin-bottom: 10px;
+        }
+        .results a {
+            text-decoration: none;
+            color: #0066cc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>악보집</h1>
+        <div class="filter-section">
+            <label for="title-filter">제목:</label>
+            <input type="text" id="title-filter" placeholder="제목으로 검색">
+
+            <label for="code-filter">코드:</label>
+            <select id="code-filter">
+                <option value="">모두</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+            </select>
+
+            <label for="speed-filter">곡 빠르기:</label>
+            <select id="speed-filter">
+                <option value="">모두</option>
+                <option value="아주느림">아주느림</option>
+                <option value="느림">느림</option>
+                <option value="보통">보통</option>
+                <option value="빠름">빠름</option>
+                <option value="아주빠름">아주빠름</option>
+            </select>
+        </div>
+
+        <div class="results">
+            <ul id="results-list">
+                <!-- 데이터는 JavaScript로 삽입됩니다 -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 데이터 로딩 및 필터링
+        document.addEventListener('DOMContentLoaded', function() {
+            // 이미지 메타데이터 파일을 가져와서 페이지에 표시
+            fetch('images_metadata.json')
+                .then(response => response.json())
+                .then(data => {
+                    const titleFilter = document.getElementById('title-filter');
+                    const codeFilter = document.getElementById('code-filter');
+                    const speedFilter = document.getElementById('speed-filter');
+                    const resultsList = document.getElementById('results-list');
+
+                    function renderResults() {
+                        resultsList.innerHTML = '';
+                        const titleValue = titleFilter.value.toLowerCase();
+                        const codeValue = codeFilter.value;
+                        const speedValue = speedFilter.value;
+
+                        data.forEach(score => {
+                            const matchesTitle = score.title.toLowerCase().includes(titleValue);
+                            const matchesCode = codeValue === '' || score.code === codeValue;
+                            const matchesSpeed = speedValue === '' || score.speed === speedValue;
+
+                            if (matchesTitle && matchesCode && matchesSpeed) {
+                                const li = document.createElement('li');
+                                li.innerHTML = `<a href="${score.url}" target="_blank">${score.title} - ${score.code} - ${score.speed}</a>`;
+                                resultsList.appendChild(li);
+                            }
+                        });
+                    }
+
+                    // 필터 이벤트 리스너 추가
+                    titleFilter.addEventListener('input', renderResults);
+                    codeFilter.addEventListener('change', renderResults);
+                    speedFilter.addEventListener('change', renderResults);
+
+                    // 초기 결과 렌더링
+                    renderResults();
+                });
+        });
+    </script>
+</body>
+</html>
