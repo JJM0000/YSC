@@ -84,7 +84,6 @@
     <script>
         // 데이터 로딩 및 필터링
         document.addEventListener('DOMContentLoaded', function() {
-            // 이미지 메타데이터 파일을 가져와서 페이지에 표시
             fetch('images_metadata.json')
                 .then(response => response.json())
                 .then(data => {
